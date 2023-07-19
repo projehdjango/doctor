@@ -7,3 +7,6 @@ class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields = ['doctor', 'start_date', 'end_date','start_time', 'end_time']
+
+class DoctorDelayForm(forms.Form):
+    delay_time = forms.IntegerField(label='Delay Time')

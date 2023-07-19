@@ -6,6 +6,7 @@
       <li>
         <input type="radio" name="appointment_id" value="{{ appointment.id }}">
         <label>{{ appointment }}</label>
+        <span>Doctor Delay: {{ appointment.doctor_delay|default:"Not Set" }}</span>
       </li>
     {% empty %}
       <li>No available appointments.</li>

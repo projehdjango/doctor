@@ -79,6 +79,8 @@ class userregisterverifycodeview(View):
                             User.objects.create_user(user_session['phone_number'])#user_session['password']
                             code_instance.delete()
                             messages.success(request,'you registerd','success')
+                            user = User.objects.get(phone_number=phone_number)
+                            login(request, user)
                             return redirect('account:register')
                         else:
                             messages.error(request, 'this code is wrong', 'danger')

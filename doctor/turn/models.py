@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import timedelta,datetime
+from django.contrib.auth import get_user_model
 # Create your models here.
 
 class Doctor(models.Model):
@@ -27,6 +28,7 @@ class Doctor(models.Model):
 
 
 class Appointment(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -36,5 +38,7 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Appointment with {self.doctor} from {self.start_date} {self.start_time} to {self.end_date} {self.end_time}"
+
+
 
 
