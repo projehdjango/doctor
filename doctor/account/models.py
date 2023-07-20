@@ -43,6 +43,7 @@ class patent(models.Model):
         ('عکس ', 'گزینه 1'),
         ('ازمایش  ', 'گزینه 2'),
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     codeID=models.CharField(max_length=11,)
     firstname=models.CharField(max_length=11,)
     lastname=models.CharField(max_length=11,)

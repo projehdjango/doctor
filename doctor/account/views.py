@@ -7,6 +7,8 @@ import random
 from .models import Otpcode,User,patent
 from django.contrib.auth import login,logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
 class userregisterviews(View):
     form_class=userregisterform
@@ -88,18 +90,19 @@ class userregisterverifycodeview(View):
         else:
             messages.error(request, 'User registration information not found', 'danger')
             return redirect('account:verify_code')
+@method_decorator(login_required, name='dispatch')
 class User_register(View):
     form_class=User_RegisterForm
     def get(self,request):
         form=self.form_class
         return render(request,'accounts/registerdata.html',{'form':form})
     def post(self,request):
-        #if request.User.is_authenticated:
-        user_id = request.user.id
+        user_id = request.user
         form = self.form_class(request.POST)
         contaxt={'form':form,'user':user_id}
         if form.is_valid():
             patent1=form.save(commit=False)
+            patent1.user = user_id
             patent1.save()
         return render(request,'accounts/registerdata.html',contaxt)
 class UserLogoutView(LoginRequiredMixin, View):
@@ -110,19 +113,49 @@ class UserLogoutView(LoginRequiredMixin, View):
 
 
 class Deatel_register(View):
-    def get(self,request):
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            # اگر کاربر لاگین کرده باشد
+            user = request.user
+            patents = patent.objects.filter(user=user)
+            if patents.exists():
+                patent_obj = patents.first()
+                context = {'user': user, 'patent': patent_obj}
+                return render(request, 'accounts/deatel.html', context)
+            else:
+                # اگر کاربر لاگین کرده باشد اما مدل Patent مرتبط با کاربر یافت نشد
+                return render(request, 'no_patent.html')
+        else:
+            # اگر کاربر لاگین نکرده باشد
+            return render(request, 'not_logged_in.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+''' def get(self,request):
         model=patent
         form={'form':model}
         return render(request,'accounts/deatel.html',form)
     def post(self,request,patent_id):
         model = patent
         form = {'form': model}
-        patent1= patent.objects.filter(id=patent_id)
+        patent1= patent.objects.filter(user=patent.user)
         if patent1.exists():
             form = patent1.first()
             context = {'patent': form}
             return render(request, 'accounts/deatel.html', context)
         else:
             # مدل با شناسه مورد نظر یافت نشد
-            return render(request, 'accounts/deatel.html')
-#وصل کردن اطلاعات کاربر به اطلاعات قلی اش مونده است
+            return render(request, 'accounts/deatel.html')'''
+#وصل کردن اطلاعات کاربر به اطلاعات قلی اش مونده اس
